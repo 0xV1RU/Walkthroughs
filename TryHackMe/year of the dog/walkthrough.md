@@ -40,7 +40,9 @@ Burp Suite was used to intercept HTTP traffic. The captured request was sent to 
 During analysis, a cookie parameter was identified `Cookie: id=fb7afe36b2ecdd97e3c1f2a4f59652a8`
 
 The cookie value appeared to be processed by the backend database, making it a potential injection point.
-To test for SQL injection, a single quote (`'`) was appended to the cookie value. This resulted in a SQL syntax error in the server response, confirming that the application was vulnerable to SQL Injection.
+To test for SQL injection, a single quote (`'`) was appended to the cookie value. This resulted in a SQL syntax error in the server response, confirming that the application was vulnerable to SQL Injection. 
+
+This vulnerability allows an attacker to manipulate backend SQL queries, potentially leading to unauthorized data extraction, file write operations, and remote code execution.
 
 ![burp request capture](https://github.com/user-attachments/assets/a54a6661-659e-4dad-8307-b82ee2bdab70)
 
@@ -48,7 +50,7 @@ To test for SQL injection, a single quote (`'`) was appended to the cookie value
 #### 4.1 Identifying Number of Columns
 To determine the number of columns in the underlying SQL query, the following payload was used:`' ORDER BY 2 -- -`
 
-The application returned a valid response, indicating that the query contained at least two columns.
+The server responded successfully without errors, confirming that the query accepted two columns.
 
 ![burp_orderby](https://github.com/user-attachments/assets/dbadb937-bf09-4db3-809b-bbfa600fd28f)
 
@@ -85,7 +87,7 @@ This confirmed that the database user had file write privileges.
 A simple PHP web shell was prepared:`<?php system($_GET['cmd']); ?>`
 The PHP code was converted into hexadecimal format and written to the web directory using SQL injection with the UNHEX() function. The file was saved as: `text.php`
 
-Once accessed through the browser, it allowed execution of system commands via URL parameters. This confirmed remote command execution capability.
+Once accessed through the browser, it allowed execution of system commands via URL parameters.This confirmed that arbitrary system commands could be executed on the target server.
 ![text php](https://github.com/user-attachments/assets/5f45585c-7b1a-4040-a75a-e1648108c87a)
 ![text_php visible on browser](https://github.com/user-attachments/assets/bac64aca-d75a-4b10-a246-0da88eb63eb8)
 ![execute any command](https://github.com/user-attachments/assets/89b4bb3e-a3bd-4bed-9523-69781d3e9a73)
@@ -108,6 +110,8 @@ Once the reverse shell file was accessed through the browser, a reverse connecti
 
 
 ![gain shell access](https://github.com/user-attachments/assets/82940ec1-88a5-4c9a-a5dc-8999964b61a6)
+
+Successful reverse shell access demonstrates complete remote command execution capability, leading to full system compromise.
 
 
 
