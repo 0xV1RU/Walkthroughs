@@ -59,6 +59,8 @@ To confirm UNION-based SQL injection and determine which column reflected user i
 `' UNION SELECT NULL,'a' -- -`
 The character 'a' was reflected in the response, confirming a successful UNION-based injection and identifying the injectable column.
 
+UNION-based SQL injection is preferred when the application reflects query results, because it allows direct and efficient data extraction. However, other SQL injection techniques such as blind or time-based injection can still lead to full compromise even without visible output.
+
 ![null&#39;a&#39;](https://github.com/user-attachments/assets/def8d3a9-0432-46cb-9e17-03847418471f)
 
 
